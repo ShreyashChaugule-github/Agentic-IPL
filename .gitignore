@@ -1,0 +1,19 @@
+# ============================================================
+# captain-cool/.gitignore
+# Git ignore file for the project
+# ============================================================
+
+# User requested to ignore these specific files/folders
+files/
+.env
+.env.local
+.env.*
+.env.example
+prompts/
+
+# Standard ignores for safety
+node_modules/
+.next/
+dist/
+build/
+.DS_Store
