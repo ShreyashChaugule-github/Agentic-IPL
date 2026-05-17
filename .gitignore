@@ -10,6 +10,7 @@ files/
 .env.*
 .env.example
 prompts/
+cloudbuild.yaml
 
 # Standard ignores for safety
 node_modules/

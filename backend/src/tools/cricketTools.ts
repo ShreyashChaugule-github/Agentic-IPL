@@ -285,12 +285,75 @@ export function get_phase_bowling_stats(input: {
 }
 
 // ============================================================
+// Cricbuzz Live Score Tool (via RapidAPI)
+// ============================================================
+export async function get_live_match_score(input: { matchId?: string }) {
+  const apiKey = process.env.RAPIDAPI_KEY;
+  const host = 'free-cricbuzz-cricket-api.p.rapidapi.com';
+
+  if (!apiKey) {
+    console.log('RAPIDAPI_KEY missing, using fallback mock data');
+    return {
+      status: 'success',
+      source: 'fallback_mock',
+      match: {
+        id: input.matchId || 'live_001',
+        teams: 'MI vs CSK',
+        score: 'MI 165/4 (18.2) | Target: 180',
+        currentRate: '9.0',
+        requiredRate: '9.0',
+        commentary: 'Simulated live score for fallback.'
+      }
+    };
+  }
+
+  try {
+    const url = input.matchId 
+      ? `https://${host}/matches/v1/${input.matchId}/scorecard`
+      : `https://${host}/matches/v1/live`;
+
+    const response = await fetch(url, {
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'x-rapidapi-host': host,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {
+      status: 'success',
+      source: 'cricbuzz_api',
+      data: data
+    };
+  } catch (error: any) {
+    console.error('Error fetching from Cricbuzz API:', error);
+    return {
+      status: 'error',
+      message: error.message,
+      source: 'fallback_mock',
+      match: {
+        id: input.matchId || 'live_001',
+        teams: 'MI vs CSK',
+        score: 'MI 165/4 (18.2) | Target: 180',
+        currentRate: '9.0',
+        requiredRate: '9.0',
+        commentary: 'API call failed, using simulated data.'
+      }
+    };
+  }
+}
+
+// ============================================================
 // Tool dispatcher — routes Gemini function calls to handlers
 // ============================================================
-export function dispatchToolCall(
+export async function dispatchToolCall(
   toolName: string,
   args: Record<string, unknown>
-): unknown {
+): Promise<unknown> {
   switch (toolName) {
     case 'calculate_win_probability':
       return calculate_win_probability(args as unknown as WinProbabilityInput);
@@ -300,6 +363,8 @@ export function dispatchToolCall(
       return get_venue_statistics(args as unknown as VenueStatsInput);
     case 'get_phase_bowling_stats':
       return get_phase_bowling_stats(args as unknown as { phase: string; pitchCondition?: string; dewFactor?: string; venue?: string });
+    case 'get_live_match_score':
+      return await get_live_match_score(args as unknown as { matchId?: string });
     default:
       throw new Error(`Unknown tool: ${toolName}`);
   }

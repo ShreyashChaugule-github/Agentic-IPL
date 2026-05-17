@@ -159,10 +159,31 @@ export const PHASE_STATS_TOOL: Tool = {
   ],
 };
 
+export const CRICBUZZ_LIVE_SCORE_TOOL: Tool = {
+  functionDeclarations: [
+    {
+      name: 'get_live_match_score',
+      description:
+        'Fetches live match scores and status from Cricbuzz API (via RapidAPI) or falls back to simulation if API is unavailable.',
+      parameters: {
+        type: Type.OBJECT,
+        properties: {
+          matchId: {
+            type: Type.STRING,
+            description: 'Optional: Specific match ID to fetch. If not provided, it will list current live matches.',
+          },
+        },
+        required: [],
+      },
+    },
+  ],
+};
+
 // All tools combined for Stats Analyst agent
 export const ALL_STATS_TOOLS: Tool[] = [
   WIN_PROBABILITY_TOOL,
   MATCHUP_ANALYSIS_TOOL,
   VENUE_STATS_TOOL,
   PHASE_STATS_TOOL,
+  CRICBUZZ_LIVE_SCORE_TOOL,
 ];

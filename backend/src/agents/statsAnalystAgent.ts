@@ -21,6 +21,7 @@ You have access to these tools:
 - analyze_batter_bowler_matchup: IPL historical head-to-head stats
 - get_venue_statistics: Ground-specific patterns and averages
 - get_phase_bowling_stats: Phase-wise bowling effectiveness data
+- get_live_match_score: Fetches live scores from Cricbuzz API
 
 MANDATORY: For every analysis, you MUST call at least 2 tools.
 
@@ -86,7 +87,7 @@ export async function runStatsAnalystAgent(
         assistantParts.push({ functionCall: part.functionCall });
 
         try {
-          const toolResult = dispatchToolCall(toolName, toolArgs);
+          const toolResult = await dispatchToolCall(toolName, toolArgs);
 
           toolCallRecords.push({
             toolName,

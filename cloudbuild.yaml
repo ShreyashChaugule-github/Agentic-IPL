@@ -5,7 +5,7 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/$PROJECT_ID/captain-cool:$SHORT_SHA'
+      - 'gcr.io/$PROJECT_ID/captain-cool:latest'
       - '-t'
       - 'gcr.io/$PROJECT_ID/captain-cool:latest'
       - '-f'
@@ -17,7 +17,7 @@ steps:
     id: 'push-image'
     args:
       - 'push'
-      - 'gcr.io/$PROJECT_ID/captain-cool:$SHORT_SHA'
+      - 'gcr.io/$PROJECT_ID/captain-cool:latest'
 
   # Step 3: Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -26,15 +26,15 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'captain-cool'
-      - '--image=gcr.io/$PROJECT_ID/captain-cool:$SHORT_SHA'
+      - 'captain-cool-backend'
+      - '--image=gcr.io/$PROJECT_ID/captain-cool:latest'
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--memory=2Gi'
+      - '--set-env-vars=GEMINI_API_KEY=${_GEMINI_API_KEY}'
 
 images:
-  - 'gcr.io/$PROJECT_ID/captain-cool:$SHORT_SHA'
   - 'gcr.io/$PROJECT_ID/captain-cool:latest'
 
 timeout: '1200s'
